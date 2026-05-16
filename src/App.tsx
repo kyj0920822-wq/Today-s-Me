@@ -75,7 +75,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-md mx-auto pt-24 px-6 space-y-12">
+      <main className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto pt-24 px-6 space-y-12">
         <section className="flex flex-col items-center">
           <div className="flex flex-col items-center mb-8 w-full">
             <motion.div
@@ -108,18 +108,18 @@ export default function App() {
               animate={{ opacity: 1, scale: 1 }}
               className="text-center mb-10 w-full"
             >
-              <h3 className="text-4xl md:text-5xl font-gaegu font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: characterConfig.secondaryColor }}>
+              <h3 className="text-4xl md:text-6xl font-gaegu font-bold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: characterConfig.secondaryColor }}>
                 {getStateKoreanName(status)}
               </h3>
             </motion.div>
 
-            <div className="flex flex-col items-center gap-8">
-              <div className="relative">
+            <div className="flex flex-col items-center justify-center gap-10 w-full">
+              <div className="relative shrink-0">
                 <Character config={characterConfig} />
               </div>
 
-              <div className="flex flex-col items-center gap-4 w-full">
-                <div className="flex gap-4 w-full">
+              <div className="flex flex-col items-center gap-4 w-full max-w-sm md:max-w-md lg:max-w-lg">
+                <div className="flex flex-col sm:flex-row gap-3 w-full">
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -127,20 +127,20 @@ export default function App() {
                       setSharedStatus(null); // Use current status
                       setShowShareCard(true);
                     }}
-                    className="flex-1 flex items-center justify-center gap-3 px-4 py-3.5 bg-indigo-500 text-white rounded-[2rem] font-bold font-gaegu text-xl shadow-xl shadow-indigo-100 transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-500 text-white rounded-[2rem] font-bold font-gaegu text-lg md:text-xl shadow-xl shadow-indigo-100 transition-all"
                   >
-                    <CreditCard size={20} />
-                    공유 카드 만들기
+                    <CreditCard size={18} />
+                    <span className="whitespace-nowrap">공유 카드 만들기</span>
                   </motion.button>
                   
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleSave}
-                    className="flex-1 flex items-center justify-center gap-3 px-4 py-3.5 bg-emerald-500 text-white rounded-[2rem] font-bold font-gaegu text-xl shadow-xl shadow-emerald-100 transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-white rounded-[2rem] font-bold font-gaegu text-lg md:text-xl shadow-xl shadow-emerald-100 transition-all"
                   >
-                    <Save size={20} />
-                    기록 공간에 담기
+                    <Save size={18} />
+                    <span className="whitespace-nowrap">기록 공간에 담기</span>
                   </motion.button>
                 </div>
 
@@ -148,7 +148,7 @@ export default function App() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowHistory(!showHistory)}
-                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white text-slate-600 border border-slate-200 rounded-[2rem] font-bold font-gaegu text-2xl shadow-sm transition-all hover:bg-slate-50"
+                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white text-slate-600 border border-slate-200 rounded-[2rem] font-bold font-gaegu text-xl md:text-2xl shadow-sm transition-all hover:bg-slate-50"
                 >
                   <History size={24} className="text-indigo-400" />
                   기록 보관소 {showHistory ? '닫기' : '보기'} ({history.length})
@@ -189,9 +189,9 @@ export default function App() {
                     아직 기록된 감정이 없어요.<br />나의 첫 번째 캐릭터를 기록해봐요!
                   </div>
                 ) : (
-                  history.map((record) => (
+                  history.map((record, index) => (
                     <HistoryItem 
-                      key={record.id} 
+                      key={record.id || index} 
                       record={record} 
                       onDelete={() => deleteRecord(record.id!)} 
                     />
@@ -252,7 +252,7 @@ function HistoryItem({ record, onDelete }: { record: DailyStatus, onDelete: () =
           className="w-12 h-12 flex items-center justify-center shrink-0" 
         >
           <div className="scale-[0.2]">
-            <Character config={config} />
+            <Character config={config} hideEffects />
           </div>
         </div>
         <div>

@@ -91,12 +91,12 @@ export default function HistoryShareCard({ history, onClose }: HistoryShareCardP
               {history.map((record, index) => {
                 const config = getDetailedCharacterConfig(record);
                 return (
-                  <div key={record.id || index} className="flex items-center gap-4 bg-orange-50/30 p-4 rounded-2xl border border-orange-100 shadow-sm">
+                  <div key={record.id || index} className="flex items-center gap-4 bg-orange-50/20 p-4 rounded-2xl border border-orange-100/50">
                     <div 
                       className="w-14 h-14 flex items-center justify-center shrink-0" 
                     >
                       <div className="scale-[0.25]">
-                        <Character config={config} />
+                        <Character config={config} hideEffects />
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">

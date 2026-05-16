@@ -72,56 +72,71 @@ export default function ShareCard({ status, config, onClose }: ShareCardProps) {
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-6"
     >
-      <div className="absolute top-8 right-8 z-[110]">
+      <div className="absolute top-4 right-4 md:top-8 md:right-8 z-[110]">
         <button 
           onClick={onClose}
-          className="p-4 bg-white/20 hover:bg-white/30 text-white rounded-full transition-all backdrop-blur-xl border border-white/20 shadow-lg active:scale-95"
+          className="p-3 md:p-4 bg-white/20 hover:bg-white/30 text-white rounded-full transition-all backdrop-blur-xl border border-white/20 shadow-lg active:scale-95"
           aria-label="Close share card"
         >
-          <X size={28} />
+          <X size={20} className="md:w-7 md:h-7" />
         </button>
       </div>
 
-      <div className="flex-1 flex items-center justify-center w-full max-h-[75vh]">
+      <div className="flex-1 flex items-center justify-center w-full max-h-[80vh]">
         {/* The Card - Hidden by default but captured */}
         <div 
           ref={cardRef}
-          className="relative w-[300px] aspect-[9/16] bg-white rounded-[40px] overflow-hidden shadow-2xl flex flex-col items-center p-8 text-center"
+          className="relative w-[320px] aspect-[9/16] rounded-[48px] overflow-hidden shadow-2xl flex flex-col items-center p-10 text-center"
+          style={{ backgroundColor: 'white' }}
         >
+          {/* Immersive background - subtle gradient/glows */}
+          <div className="absolute inset-0 pointer-events-none" style={{ 
+            background: `radial-gradient(circle at top right, ${config.primaryColor}15, transparent), 
+                        radial-gradient(circle at bottom left, ${config.secondaryColor}10, transparent),
+                        white` 
+          }} />
+          
+          <div className="absolute top-1/4 -right-32 w-64 h-64 rounded-full blur-[100px] pointer-events-none" style={{ backgroundColor: `${config.primaryColor}33` }} />
+          <div className="absolute bottom-1/4 -left-32 w-64 h-64 rounded-full blur-[100px] pointer-events-none" style={{ backgroundColor: `${config.secondaryColor}22` }} />
+
           {/* Card Top Branding */}
-          <div className="w-full flex justify-between items-center mb-10">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-md flex items-center justify-center text-[8px] text-white font-bold" style={{ backgroundColor: config.secondaryColor }}>나</div>
-              <span className="font-gaegu text-base font-bold text-slate-800 tracking-tight">오늘의 나</span>
+          <div className="relative z-10 w-full flex justify-between items-center mb-12">
+            <div className="text-left">
+              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest block font-bold">{status.date}</span>
+              <span className="text-[8px] font-mono text-slate-300 block">
+                {status.timestamp ? new Date(status.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+              </span>
             </div>
-            <span className="text-[9px] font-mono text-slate-400 uppercase tracking-widest">{status.date}</span>
+            <div className="flex items-center gap-2">
+              <span className="font-gaegu text-lg font-bold text-slate-800 tracking-tight">오늘의 나</span>
+              <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] text-white font-bold" style={{ backgroundColor: config.secondaryColor }}>나</div>
+            </div>
           </div>
 
-          <div className="relative mb-6 mt-2">
-             <div className="absolute -inset-10 blur-3xl rounded-full" style={{ backgroundColor: `${config.primaryColor}33` }} />
-             <div className="scale-90">
+          <div className="relative z-10 mb-8 mt-4">
+             <div className="absolute -inset-14 blur-3xl rounded-full" style={{ backgroundColor: `${config.primaryColor}22` }} />
+             <div className="scale-100">
                 <Character config={config} />
              </div>
           </div>
 
-          <div className="mt-8 space-y-4 w-full">
-            <div className="flex items-center justify-center gap-2 px-3 py-0.5 font-bold rounded-full border inline-flex mx-auto" style={{ backgroundColor: `${config.primaryColor}11`, color: config.secondaryColor, borderColor: `${config.secondaryColor}22` }}>
-              <Sparkles size={10} className="animate-pulse" />
-              <span className="text-[9px] uppercase tracking-widest font-mono">Today's Character</span>
+          <div className="relative z-10 mt-10 space-y-5 w-full">
+            <div className="flex items-center justify-center gap-2 px-3 py-1 font-bold rounded-full border inline-flex mx-auto" style={{ backgroundColor: `${config.primaryColor}11`, color: config.secondaryColor, borderColor: `${config.secondaryColor}22` }}>
+              <Sparkles size={11} className="animate-pulse" />
+              <span className="text-[10px] uppercase tracking-widest font-mono">Today's Character</span>
             </div>
             
-            <h3 className="text-3xl font-gaegu font-bold tracking-tight w-full truncate" style={{ color: config.secondaryColor }}>
+            <h3 className="text-4xl font-gaegu font-bold tracking-tight w-full truncate" style={{ color: config.secondaryColor }}>
               {getStateKoreanName(status)}
             </h3>
+
+            <p className="text-[12px] text-slate-600 font-gaegu leading-relaxed max-w-[200px] mx-auto">
+              {getStateMessage(status)}
+            </p>
           </div>
 
-          <div className="mt-auto pt-6 flex flex-col items-center gap-1">
-             <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Heart key={i} size={8} className="text-indigo-200 fill-indigo-200" />
-                ))}
-             </div>
-             <p className="text-[8px] text-slate-300 font-mono tracking-widest uppercase italic">
+          <div className="relative z-10 mt-auto mb-28 flex flex-col items-center gap-1.5 px-6">
+             <p className="text-[9px] text-slate-400 font-mono tracking-widest uppercase italic font-bold">
                Generated by Today's Character AI
              </p>
           </div>

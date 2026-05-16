@@ -5,27 +5,30 @@ import { cn } from '../lib/utils';
 
 interface CharacterProps {
   config: CharacterConfig;
+  hideEffects?: boolean;
 }
 
-export default function Character({ config }: CharacterProps) {
+export default function Character({ config, hideEffects }: CharacterProps) {
   const { primaryColor, secondaryColor, eyeType, mouthType, eyebrowType, accessory } = config;
 
   return (
     <div className="relative w-64 h-64 flex items-center justify-center">
       {/* Background Glow */}
-      <motion.div
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute inset-0 rounded-full blur-3xl"
-        style={{ backgroundColor: primaryColor }}
-      />
+      {!hideEffects && (
+        <motion.div
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute inset-0 rounded-full blur-3xl"
+          style={{ backgroundColor: primaryColor }}
+        />
+      )}
 
       {/* Main Body */}
       <motion.div
@@ -41,7 +44,7 @@ export default function Character({ config }: CharacterProps) {
             '45% 55% 70% 30% / 60% 40% 60% 40%' // Default blob
         }}
         animate={{
-          y: [0, -10, 0],
+          y: hideEffects ? 0 : [0, -10, 0],
           rotate: config.state === 'angry' ? [-2, 2, -2] : config.state === 'happy' ? [-1, 1, -1] : config.accessory === 'party' ? [-5, 5, -5] : [0, 0, 0],
           scaleY: config.state === 'exhausted' ? 0.8 : 1,
           scaleX: config.state === 'exhausted' ? 1.15 : 1,
@@ -119,11 +122,13 @@ export default function Character({ config }: CharacterProps) {
       </AnimatePresence>
 
       {/* Ground Shadow */}
-      <motion.div 
-        className="absolute -bottom-4 w-32 h-4 bg-black/10 rounded-[100%] blur-md"
-        animate={{ scaleX: [1, 1.2, 1] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {!hideEffects && (
+        <motion.div 
+          className="absolute -bottom-4 w-32 h-4 bg-black/10 rounded-[100%] blur-md"
+          animate={{ scaleX: [1, 1.2, 1] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
     </div>
   );
 }
