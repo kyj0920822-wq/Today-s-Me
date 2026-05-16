@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    // --- Validation Blueprints ---
+
+    function isValidUserProfile(data) {
+      return data.uid == request.auth.uid 
+          && data.displayName is string && data.displayName.size() <= 100
+          && data.email is string && data.email.size() <= 100
+          && (data.photoURL == null || (data.photoURL is string && data.photoURL.size() <= 1000))
+          && data.keys().hasAll(['uid', 'displayName', 'email', 'lastActive'])
+          && data.keys().size() <= 6;
+    }
+
+    function isValidDailyStatus(data) {
+      return data.userId == request.auth.uid
+          && data.date is string && data.date.size() <= 20
+          && data.characterType is string && data.characterType.size() <= 100
+          && data.description is string && data.description.size() <= 1000
+          && data.energyPercent is number && data.energyPercent >= 0 && data.energyPercent <= 100
+          && data.sleepHours is number
+          && data.mood is string
+          && data.meal is string
+          && data.socialEnergy is string
+          && data.fatigue is string
+          && data.hunger is string
+          && data.studyAmount is string
+          && data.updatedAt == request.time
+          && data.keys().hasAll(['userId', 'date', 'characterType', 'description', 'energyPercent', 'updatedAt']);
+    }
+
+    function isValidReaction(data) {
+      return data.fromUserId == request.auth.uid
+          && data.type in ['like', 'coffee', 'hug', 'food']
+          && data.timestamp == request.time;
+    }
+
+    // --- Matches ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn(); // Basic user search
+      allow create: if isOwner(userId) && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) 
+                    && isValidUserProfile(incoming())
+                    && incoming().uid == existing().uid
+                    && incoming().email == existing().email;
+      
+      match /friends/{friendId} {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId); // Only owner can manage friends
+      }
+    }
+
+    match /statuses/{statusId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn(); // Public-ish daily characters
+      allow create: if isSignedIn() && isValidDailyStatus(incoming());
+      allow update: if isOwner(existing().userId) 
+                    && isValidDailyStatus(incoming())
+                    && incoming().userId == existing().userId;
+      allow delete: if isOwner(existing().userId);
+
+      match /reactions/{reactionId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isValidReaction(incoming());
+        // No updates to reactions, only deletion by owner
+        allow delete: if isOwner(existing().fromUserId);
+      }
+    }
+  }
+}

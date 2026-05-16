@@ -1,0 +1,6 @@
+{
+  "name": "오늘의 나 캐릭터 (Today's Me)",
+  "description": "기분과 상태를 입력하면 나만의 캐릭터로 변하는 감정 기록 다이어리",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

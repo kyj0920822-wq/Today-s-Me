@@ -1,0 +1,71 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "email": { "type": "string" },
+        "currentStatusId": { "type": "string" },
+        "lastActive": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "email"]
+    },
+    "DailyStatus": {
+      "title": "Daily Status",
+      "description": "Daily status of a user",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "sleepHours": { "type": "number" },
+        "mood": { "type": "string" },
+        "meal": { "type": "string" },
+        "socialEnergy": { "type": "string" },
+        "fatigue": { "type": "string" },
+        "hunger": { "type": "string" },
+        "studyAmount": { "type": "string" },
+        "date": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "characterType": { "type": "string" },
+        "description": { "type": "string" },
+        "energyPercent": { "type": "number" },
+        "oneLiner": { "type": "string" }
+      },
+      "required": ["userId", "date", "characterType"]
+    },
+    "Reaction": {
+      "title": "Reaction",
+      "description": "Interaction reaction from a friend",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["like", "coffee", "hug", "food"] },
+        "fromUserId": { "type": "string" },
+        "fromName": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "fromUserId", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Root user profile"
+    },
+    "/statuses/{statusId}": {
+      "schema": "DailyStatus",
+      "description": "User daily records"
+    },
+    "/statuses/{statusId}/reactions/{reactionId}": {
+      "schema": "Reaction",
+      "description": "Reactions on a status"
+    },
+    "/users/{userId}/friends/{friendId}": {
+       "schema": { "type": "object", "properties": { "uid": { "type": "string" } } },
+       "description": "User's friends list"
+    }
+  }
+}
