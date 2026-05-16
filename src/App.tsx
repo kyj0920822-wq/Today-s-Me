@@ -5,6 +5,7 @@ import Character from './components/Character';
 import InputForm from './components/InputForm';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Heart, Sparkles, CreditCard, Save, History, Trash2, Share2 } from 'lucide-react';
+import ShareCard from './components/ShareCard';
 import HistoryShareCard from './components/HistoryShareCard';
 
 const INITIAL_STATUS: DailyStatus = {
